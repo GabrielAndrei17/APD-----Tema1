@@ -1,0 +1,33 @@
+//Andrei Gabriel 333CBa
+Procesare paralela folosind paradigma Map-Reduce
+Tema 1- APD
+
+Dupa testarea locala: Scor total = 120/120
+
+Pentru aceasta tema am folosit pentru fiecare thread de map: un hashMap
+- care pentru fiecare exponent de putere va avea o lista de intregi.
+- hashMap[i] => lista cu numere care se pot scrie a^i.
+Rezultand matricea de liste: hashMaps
+- hashMaps[j][i] => lista cu numere care se pot scrie a^i, calculata de
+thread-ul mapper j.
+
+In functia main voi porni simultan thread-urile de mapper si reducer
+Mapper:
+ -Va primi in argument hashMap-ul corespunzator numarului sau, numarul de ordine a fisierului pe care il va
+ procesa prima data si vectorul cu toate numele fisierelor.
+ -Va citi din fisierul dat numerele si va verifica daca respecta conditia de putere perfecta fiind adaugat in hashMap.
+ -Thread-ul nu se va opri doar cu tratarea fisierului dat, si va incerca sa treaca la urmatorul fisier care nu a fost tratat.
+ Am evita un race condition folosind un mutex pentru a proteja variabila globala files_done care pastreaza indicele fisierului
+ care trebuie procesat.
+ Un thread de mapping va trata fisiere pana cand nu mai ramane niciunul.
+
+Reducer:
+Deoarece thread-urile trebuie sa inceapa sa lucreze dupa terminarea celor de mapper, am folosit o bariera in functia de mapper
+Dupa terminarea procesarii de mapare a tuturor thread-urilor, le voi spune thread-urilor de reduce ca pot sa inceapa prin mutexul map_finished
+
+-Va lua coloanele matricei hashMaps si le va concatena pe prima linie.
+-Apoi se va numara elementele listei, scriind in fisierul output corespunzator id-ului thread-ului
+
+In main se va da join la toate thread-urile.
+
+In functii.c si tema1.h am definit functiile si structurile pe care le-am folosit pentru rezolvare
